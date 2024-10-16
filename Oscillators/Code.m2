@@ -6,7 +6,10 @@
 hasNoLeaf = method()
 hasNoLeaf Graph := G -> all(vertices G, i -> degree(G,i) > 1)
 
-oscJacobian = method(Options => {Reduced=>false})
+
+--------------------------------------------------------------------
+----- Creation of main objects (OscRing, oscQuadrics)
+--------------------------------------------------------------------
 
 oscRing = method(Options => {
         Start => 1,
@@ -42,52 +45,11 @@ trig Ring := (R) -> (
     ideal for i from 0 to n-1 list (R_i)^2+(R_(i+n))^2-1
     )
 
-
----------------------------
--- Versions with weights --
--- need to check these   --
----------------------------
-oscSystem = method()
-oscSystem(Graph, Ring, HashTable) := (G, R, wts) -> (
-    -- 
-    n := # vertices G;  -- R should have 2n + #params variables.
-    if toList(0..n-1) =!= sort vertices G then
-      error "got incompatible graph";
-    sine := (i) -> R_(n+i);
-    cosine := (i) -> R_(i);
-    ideal for i from 0 to n list (
-        N := toList neighbors(G,i);
-        sum for j in N list (
-            e := sort {i,j};
-            wt := if wts#?e then wts#e else 1_ZZ;
-            --<< "(e,wt) = " << e << " " << wt << endl;
-            wt*(sine j * cosine i - sine i * cosine j)
-            )
-        )
-    )
-oscSystemReduced = method()
-oscSystemReduced(Graph, Ring, HashTable) := (G, R, wts) -> (
-    -- 
-    n := # vertices G - 1;  -- R should have 2n + #params variables.
-    if toList(0..n) =!= sort vertices G then
-      error "got incompatible graph";
-    sine := (i) -> if i === 0 then 0_R else R_(n+i-1);
-    cosine := (i) -> if i === 0 then 1_R else R_(i-1);
-    ideal for i from 0 to n list (
-        N := toList neighbors(G,i);
-        sum for j in N list (
-            e := sort {i,j};
-            wt := if wts#?e then wts#e else 1_ZZ;
-            --<< "(e,wt) = " << e << " " << wt << endl;
-            wt*(sine j * cosine i - sine i * cosine j)
-            )
-        )
-    )
-
 ---------------------------------------------------
--- Keep the following code for weighted systems? --
----------------------------------------------------
--- Is this correct al all??!
+-- Jacobian Constructions
+--------------------------------------------------
+
+oscJacobian = method(Options => {Reduced=>false})
 oscJacobian Ideal := opts -> P -> (
     -- P is a system created with oscSystem, or oscSystemReduced
     -- each polynomial should be <= linear in R_i, R_(n+i), all i=0..n-1
@@ -100,98 +62,6 @@ oscJacobian Ideal := opts -> P -> (
         )
     )
 
-ringOscillatorGraph = method()
-ringOscillatorGraph(ZZ,ZZ) := (n,k) -> (
-    graph unique flatten for i from 0 to n-1 list (
-        for j from i-k to i+k list (
-            if j == i then continue;
-            j1 := if j < 0 then j + n else if j >= n then j-n else j;
-            sort {i,j1}
-            )
-        )
-    )
-
-egRingOsc = method(Options => options oscRing)
-egRingOsc(ZZ,ZZ) := opts -> (n,k) -> (
-    G := ringOscillatorGraph(n,k);
-    R := oscRing(n-1,{},opts);
-    P := oscSystemReduced(G,R,hashTable{});
-    J := oscJacobian P;
-    (J, P + trig R)
-    )
-
-egRingOscWeighted = method(Options => options oscRing
-        )
-egRingOscWeighted(ZZ,ZZ,Symbol) := opts -> (n,k,symb) -> (
-    G := ringOscillatorGraph(n,k);
-    R := oscRing(n-1,{symb},opts);
-    a := R_(2*(n-1));
-    wts := flatten for k0 from 2 to k list
-      for i from 0 to n-1 list sort {i,if i+k0 >= n then i+k0-n else i+k0} => a^(k0-1);
-    P := oscSystemReduced(G,R,hashTable wts);
-    J := oscJacobian P;
-    (J, P + trig R)
-    )
-
----------------------------------------------------
--- Ideal without weights, i.e. weights are all 1 --
----------------------------------------------------
-oscSystemReduced(Graph, Ring) := (G, R) -> (
-    n := # vertices G - 1;  -- R should have == 2n variables.
-    if toList(0..n) =!= sort vertices G then
-      error "got incompatible graph";
-    sine := (i) -> if i === 0 then 0_R else R_(n+i-1);
-    cosine := (i) -> if i === 0 then 1_R else R_(i-1);
-    I := ideal for i from 0 to n list (
-        N := toList neighbors(G,i);
-        sum for j in N list (
-            e := sort {i,j};
-            (sine j * cosine i - sine i * cosine j)
-            )
-        );
-    I + trig R
-    )
-
--- Currently, this does not work with the ring construction. I am trying to forget about fixing theta_0 = 0, and just use the ring construction.
-oscQuadrics = method()
-oscQuadrics(Graph, Ring) := (G, R) -> (
-    -- R should have == 2n variables.
-    n := # vertices G;
-    if 2*n =!= numgens R then error("expected ring with "|2*n|" variables");
-    if toList(0..(n-1)) =!= sort vertices G then
-      error "got incompatible graph";
-    sine := (i) -> R_(n+i);
-    cosine := (i) -> R_i;
-    I := ideal for i from 0 to n-1 list (
-        N := toList neighbors(G,i);
-        sum for j in N list (
-            (- sine j * cosine i + sine i * cosine j)
-            )
-        );
-    I
-    )
-
-fullJacobian = (G,R) -> (
-    -- G is a grpah
-    -- R is a ring created with oscRing(# vertices G, params)
-    if not R.?numOscillators then error "expected ring generated by 'oscRing'";
-    n := R.numOscillators;
-    if # vertices G =!= n+1 then error("expected "|(n+1)|" oscillators");
-    sine := (i) -> if i === 0 then 0_R else R_(n+i-1);
-    cosine := (i) -> if i === 0 then 1_R else R_(i-1);
-    --sine := (i) -> R_(n+i);
-    --cosine := (i) -> R_i;
-    matrix for i from 0 to n list for j from 0 to n list (
-        if i =!= j then (
-            if member(j, neighbors(G,i)) then (
-                -- entry is cos(theta_j - theta_i)
-                cosine j * cosine i + sine j * sine i
-            ) else 0_R
-        ) else 
-          - sum for j in toList neighbors(G, i) list (cosine j * cosine i + sine j * sine i)
-        )
-    )
-    
 oscJacobian(Graph, Ring) := opts -> (G, R) -> (
     -- let w(1), ..., w(n-1) be w(i) = theta(i) - theta(0).  These are the angles that are represented in R.
     -- let w(0) = theta_0 + ... + theta_(n-1).
@@ -228,6 +98,71 @@ oscJacobian(Graph, Ring) := opts -> (G, R) -> (
             )
         )
     )    
+
+oscJacobian(Graph) := opts -> G -> oscJacobian(G, oscRing(G), opts)
+
+
+fullJacobian = method()
+fullJacobian(Graph, Ring) = (G,R) -> (
+    -- G is a grpah
+    -- R is a ring created with oscRing(# vertices G, params)
+    if not R.?numOscillators then error "expected ring generated by 'oscRing'";
+    n := R.numOscillators;
+    if # vertices G =!= n+1 then error("expected "|(n+1)|" oscillators");
+    sine := (i) -> if i === 0 then 0_R else R_(n+i-1);
+    cosine := (i) -> if i === 0 then 1_R else R_(i-1);
+    --sine := (i) -> R_(n+i);
+    --cosine := (i) -> R_i;
+    matrix for i from 0 to n list for j from 0 to n list (
+        if i =!= j then (
+            if member(j, neighbors(G,i)) then (
+                -- entry is cos(theta_j - theta_i)
+                cosine j * cosine i + sine j * sine i
+            ) else 0_R
+        ) else 
+          - sum for j in toList neighbors(G, i) list (cosine j * cosine i + sine j * sine i)
+        )
+    )
+
+---------------------------------------------------
+-- Ideal without weights, i.e. weights are all 1 --
+---------------------------------------------------
+oscSystemReduced(Graph, Ring) := (G, R) -> (
+    n := # vertices G - 1;  -- R should have == 2n variables.
+    if toList(0..n) =!= sort vertices G then
+      error "got incompatible graph";
+    sine := (i) -> if i === 0 then 0_R else R_(n+i-1);
+    cosine := (i) -> if i === 0 then 1_R else R_(i-1);
+    I := ideal for i from 0 to n list (
+        N := toList neighbors(G,i);
+        sum for j in N list (
+            e := sort {i,j};
+            (sine j * cosine i - sine i * cosine j)
+            )
+        );
+    I + trig R
+    )
+
+oscQuadrics = method()
+oscQuadrics(Graph, Ring) := (G, R) -> (
+    -- R should have == 2n variables.
+    n := # vertices G;
+    if 2*n =!= numgens R then error("expected ring with "|2*n|" variables");
+    if toList(0..(n-1)) =!= sort vertices G then
+      error "got incompatible graph";
+    sine := (i) -> R_(n+i);
+    cosine := (i) -> R_i;
+    I := ideal for i from 0 to n-1 list (
+        N := toList neighbors(G,i);
+        sum for j in N list (
+            (- sine j * cosine i + sine i * cosine j)
+            )
+        );
+    I
+    )
+
+oscQuadrics(Graph) := G -> oscQuadrics(G, oscRing(G))
+    
 
 
 

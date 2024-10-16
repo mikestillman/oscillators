@@ -53,6 +53,7 @@ baseDirectory = Oscillators#"source directory"
 ----- CODE
 --------------------------------------------------------------------
 load(baseDirectory | "Oscillators/Code.m2")
+load(baseDirectory | "Oscillators/UnknownCode.m2")
 --- THINGS TO IMPLEMENT? -- 
 -*
 
