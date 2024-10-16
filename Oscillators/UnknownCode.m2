@@ -42,6 +42,19 @@ oscSystemReduced(Graph, Ring, HashTable) := (G, R, wts) -> (
             )
         )
     )
+oscSystemReduced(Graph, Ring) := (G, R) -> (
+    n := # vertices G - 1;  -- R should have == 2n variables.
+    sine := (i) -> if i === 0 then 0_R else R_(n+i-1);
+    cosine := (i) -> if i === 0 then 1_R else R_(i-1);
+    I := ideal for i from 0 to n list (
+        N := toList neighbors(G,i);
+        sum for j in N list (
+            e := sort {i,j};
+            (sine j * cosine i - sine i * cosine j)
+            )
+        );
+    I + trig R
+    )
 
 ringOscillatorGraph = method()
 ringOscillatorGraph(ZZ,ZZ) := (n,k) -> (
