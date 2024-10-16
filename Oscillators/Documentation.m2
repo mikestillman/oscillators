@@ -65,7 +65,6 @@ doc ///
   Key
     oscRing
     (oscRing, Graph)
-    (oscRing, ZZ)
   Headline
     create a polynomial ring for a given graph or number of oscillators
   Usage
@@ -78,8 +77,6 @@ doc ///
       The number of oscillators will be one less than the number of vertices of $G$
     CoefficientRing => Ring
       the coefficient ring to use, for numerical work, @TO "CC"@ is a good choice
-    Start => ZZ
-      the index of the first oscillator
     Symbols => Sequence
       a sequence of two symbols.  The first refers to the cosine of the given angles
         and the second refers to the sine of the given angles

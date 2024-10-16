@@ -34,7 +34,6 @@ export {
     -- symbols
     "numOscillators",
     "Symbols",
-    "Start",
     "Radians",
     "Stable",
     "Unstable",
