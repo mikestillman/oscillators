@@ -32,7 +32,7 @@ oscRing(ZZ, List) := Ring => opts -> (n, params) -> (
     R
     )
 oscRing ZZ := Ring => opts -> n -> oscRing(n, {}, opts)
-oscRing Graph := Ring => opts -> G -> oscRing(# vertices G - 1, opts)
+oscRing Graph := Ring => opts -> G -> oscRing(# vertices G , opts)
 
 -- Helper function to return the ideal on cos and sin for n variables.
 trig = method()
