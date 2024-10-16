@@ -163,6 +163,17 @@ oscQuadrics(Graph, Ring) := (G, R) -> (
 
 oscQuadrics(Graph) := G -> oscQuadrics(G, oscRing(G))
     
+vertexSpanningPolynomial = method()
+vertexSpanningPolynomial(Graph) := G -> (
+    R := oscRing(G);
+    sine := (i) -> (select(R.generators, k -> toString k == toString (R.Symbols_0)_i))_0;
+    VG := matrix for i in vertices G list for j in vertices G list (
+        if i === j then (
+            sum for n in toList neighbors(G,i) list sine n
+        ) else if member(j, neighbors(G,i)) then - sine i else 0
+    );
+    det submatrix(VG, 1..#vertices G - 1, 1..#vertices G - 1) / sine (vertices G)_0
+)
 
 
 

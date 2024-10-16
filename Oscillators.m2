@@ -30,6 +30,7 @@ export {
     "getLinearlyStableSolutions",
     "allUniquePrincipalMinors",
     "twisted",
+    "vertexSpanningPolynomial",
     -- symbols
     "numOscillators",
     "Symbols",
