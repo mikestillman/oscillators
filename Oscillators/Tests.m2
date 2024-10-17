@@ -10,7 +10,7 @@ TEST ///
   S = oscRing 3
   assert(numgens S == 6) -- basically: we set theta_0 to 0.
 
-  IG = oscSystemReduced(G,S)
+  IG = oscSystem(G,S)
   Ians = ideal(y_2+y_3,
       -x_2*y_1-x_3*y_1+x_1*y_2+x_1*y_3,
       x_2*y_1-x_1*y_2-x_3*y_2+x_2*y_3-y_2,
@@ -43,7 +43,7 @@ TEST ///
   S = oscRing 3
   assert(numgens S == 6) -- basically: we set theta_0 to 0.
 
-  IG = oscSystemReduced(G,S)
+  IG = oscSystem(G,S)
   Ians = ideal(y_1+y_3,
       -x_2*y_1+x_1*y_2-y_1,
       x_2*y_1-x_1*y_2-x_3*y_2+x_2*y_3,
@@ -75,7 +75,7 @@ TEST ///
   -- The triangle
   G = graph({0,1,2},{{0,1},{1,2},{0,2}})
   R = oscRing(G, CoefficientRing => QQ)
-  I = oscSystemReduced(G,R);
+  I = oscSystem(G,R);
   I = ideal gens gb trim I
       C = decompose I
       standardI = ideal(y_1, y_2, x_1^2-1, x_2^2-1)
@@ -117,7 +117,7 @@ TEST ///
   -- TODO: get the same info as in email...
   G = graph({0,1,2,3},{{0,1},{1,2},{2,3},{0,3}})
   R = oscRing(# vertices G - 1,{}, CoefficientRing => QQ)
-  I = oscSystemReduced(G,R);
+  I = oscSystem(G,R);
   --I = ideal gens gb trim I
   C = decompose I
       assert(#C == 5)
@@ -179,7 +179,7 @@ TEST ///
   -- analyze stability of all solutions given a graph G
   G = graph({0,1,2,3},{{0,1},{1,2},{2,3},{0,3}})
   S = oscRing(G, CoefficientRing => QQ)
-  I = oscSystemReduced(G,S);
+  I = oscSystem(G,S);
   netList I_*
   dim I
   I == radical I
@@ -213,7 +213,7 @@ TEST ///
   -- Gs_0 -- pentagon  
   G = Gs_0
   S = oscRing(G, CoefficientRing => QQ)
-  I = oscSystemReduced(G,S);
+  I = oscSystem(G,S);
   netList I_*
   dim I
   I == radical I
@@ -234,7 +234,7 @@ TEST ///
   -- Gs_1
   G = Gs_1
   S = oscRing(G, CoefficientRing => QQ)
-  I = oscSystemReduced(G,S);
+  I = oscSystem(G,S);
   netList I_*
   dim I
   I == radical I
@@ -254,7 +254,7 @@ TEST ///
   -- Gs_2
   G = Gs_2
   S = oscRing(G, CoefficientRing => QQ)
-  I = oscSystemReduced(G,S);
+  I = oscSystem(G,S);
   netList I_*
   dim I
   I == radical I
@@ -270,7 +270,7 @@ TEST ///
   -- Gs_3
   G = Gs_3
   S = oscRing(G, CoefficientRing => QQ)
-  I = oscSystemReduced(G,S);
+  I = oscSystem(G,S);
   netList I_*
   dim I
   I == radical I
@@ -295,7 +295,7 @@ TEST ///
   -- Gs_4
   G = Gs_4
   S = oscRing(G, CoefficientRing => QQ)
-  I = oscSystemReduced(G,S);
+  I = oscSystem(G,S);
   netList I_*
   dim I
   I == radical I
@@ -312,7 +312,7 @@ TEST ///
   -- Gs_5
   G = Gs_5
   S = oscRing(G, CoefficientRing => QQ)
-  I = oscSystemReduced(G,S);
+  I = oscSystem(G,S);
   netList I_*
   dim I
   I == radical I
@@ -331,7 +331,7 @@ TEST ///
   -- Gs_6
   G = Gs_6
   S = oscRing(G, CoefficientRing => QQ)
-  I = oscSystemReduced(G,S);
+  I = oscSystem(G,S);
   netList I_*
   dim I
   I == radical I
@@ -349,7 +349,7 @@ TEST ///
   -- Gs_7
   G = Gs_7
   S = oscRing(G, CoefficientRing => QQ)
-  I = oscSystemReduced(G,S);
+  I = oscSystem(G,S);
   netList I_*
   dim I
   I == radical I
@@ -368,7 +368,7 @@ TEST ///
   -- Gs_8
   G = Gs_8
   S = oscRing(G, CoefficientRing => QQ)
-  I = oscSystemReduced(G,S);
+  I = oscSystem(G,S);
   netList I_*
   dim I
   I == radical I
@@ -385,7 +385,7 @@ TEST ///
   -- Gs_9
   G = Gs_9
   S = oscRing(G, CoefficientRing => QQ)
-  I = oscSystemReduced(G,S);
+  I = oscSystem(G,S);
   netList I_*
   dim I
   I == radical I
@@ -428,7 +428,7 @@ TEST ///
   RC = oscRing(n-1,{}, CoefficientRing => CC)
   R = oscRing(n-1,{}, CoefficientRing => QQ)
   realsolsGs = for G in Gs list (
-      IC = oscSystemReduced(G,RC);
+      IC = oscSystem(G,RC);
       JC = oscJacobian(G, RC);
       elapsedTime realsols = findRealSolutions IC;
       realsols = realsols/(pt -> prepend(identifyStability(JC, pt), pt));
@@ -478,7 +478,7 @@ TEST ///
   comps/(i -> sub(i, matrix{pt1}))  
   sub(comps_1, x_0 => 1, y_0 => 0)
   dim comps_1
-  oscSystemReduced(G5s_0, R)
+  oscSystem(G5s_0, R)
   
   for g in G5s list (
       I := oscQuadrics(g, R);
@@ -556,11 +556,11 @@ TEST ///
     
   R1 = oscRing(4, {}, CoefficientRing => ZZ/32003)
   for g in G5s list (
-      I := oscSystemReduced(g, R1);
+      I := oscSystem(g, R1);
       elapsedTime radical I == I
       )
 
-  id1 = oscSystemReduced(G5s_6, R1)
+  id1 = oscSystem(G5s_6, R1)
   rad1 = radical id1
   decompose id1
   decompose rad1
@@ -620,7 +620,7 @@ TEST ///
     RC = oscRing(n-1,{}, CoefficientRing => CC)
     R = oscRing(n-1,{}, CoefficientRing => QQ)
     realsolsGs = for G in Gs list (
-        IC = oscSystemReduced(G,RC);
+        IC = oscSystem(G,RC);
         JC = oscJacobian(G, RC);
         elapsedTime realsols = findRealSolutions IC;
         realsols = realsols/(pt -> prepend(identifyStability(JC, pt), pt));
@@ -634,7 +634,7 @@ TEST ///
                              -- since some solutions appear more than once.
 
     realsolsGsQQ = for G in Gs list (
-        I = oscSystemReduced(G,R);
+        I = oscSystem(G,R);
         JC = oscJacobian(G, RC);
         J = oscJacobian(G,R);
         C = decompose I;
@@ -650,7 +650,7 @@ TEST ///
     netList realsolsGsQQ_2_1 -- this one has 5 isolated solutions, all with sin theta_i = 0
 
     Is = for G in Gs list (
-        I = oscSystemReduced(G,R);
+        I = oscSystem(G,R);
         J = oscJacobian(G,R);
         C = decompose I;
         (I, C, J)
@@ -682,7 +682,7 @@ TEST ///
     -- Graph Gs_0
     -- square
     G = graph ({0, 1, 2, 3}, {{0, 1}, {1,2}, {2, 3}, {0,3}})
-    I = oscSystemReduced(G,R)
+    I = oscSystem(G,R)
     C = decompose I
     trim first Is_0 -- 8 solutions: all sin=0, cos=+-1.
     assert(I == radical I) -- true
@@ -699,7 +699,7 @@ TEST ///
     -- square with one diagonal
     -- sort vertices Gs_1, (edges Gs_1)/toList/sort//sort
     G = graph ({0, 1, 2, 3}, {{0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}})
-    I = oscSystemReduced(G,R);
+    I = oscSystem(G,R);
     C = decompose I
     PD = primaryDecomposition I
     gbI = ideal gens gb trim I
@@ -714,7 +714,7 @@ TEST ///
     -- complete graph on 4 vertices
     -- sort vertices Gs_2, (edges Gs_2)/toList/sort//sort
     G = graph ({0, 1, 2, 3}, {{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}})
-    I = oscSystemReduced(G,R);
+    I = oscSystem(G,R);
     C = decompose I
     C/dim
     #C
@@ -761,7 +761,7 @@ TEST ///
     J1 = oscJacobian(G,RC,Reduced=>false)
     J2 = oscJacobian(G,RC)
 
-    PC = oscSystemReduced(G,RC);
+    PC = oscSystem(G,RC);
     IC = PC + trig RC;
     elapsedTime realsols = findRealSolutions IC;
     netList realsols    
@@ -788,7 +788,7 @@ TEST ///
     RC = oscRing(n-1,{}, CoefficientRing => CC)
     R = oscRing(n-1,{}, CoefficientRing => QQ)
     realsolsGs = for G in Gs list (
-        PC = oscSystemReduced(G,RC);
+        PC = oscSystem(G,RC);
         JC = oscJacobian(G, RC);
         IC = PC + trig RC;
         elapsedTime realsols = findRealSolutions IC;
@@ -800,7 +800,7 @@ TEST ///
 
     realsolsGsQQ = for G in drop(Gs,-1) list (
         << "doing " << G << endl;
-        P = oscSystemReduced(G,R);
+        P = oscSystem(G,R);
         JC = oscJacobian(G, RC);
         J = oscJacobian(G,R);
         I = P + trig R;
@@ -823,7 +823,7 @@ TEST ///
     
     dims = for G in drop(Gs,-1) list (
         << "doing " << G << endl;
-        P = oscSystemReduced(G,R);
+        P = oscSystem(G,R);
         I = P + trig R;
         C = elapsedTime decompose I;
         G => tally (C/dim)
@@ -875,7 +875,7 @@ TEST ///
         << "---- doing graph " << G << endl;
         n := # vertices G;
         RC = oscRing(n-1,{}, CoefficientRing => CC);
-        PC = oscSystemReduced(G,RC);
+        PC = oscSystem(G,RC);
         JC = oscJacobian(G, RC);
         IC = PC + trig RC;
         elapsedTime realsols = findRealSolutions IC;
@@ -921,7 +921,7 @@ TEST ///
     
     G = Gs_21
     R = oscRing(n-1,{}, CoefficientRing => QQ)
-    P = oscSystemReduced(G,R);
+    P = oscSystem(G,R);
     J = oscJacobian(G,R);
     I = P + trig R;
     dim I
@@ -972,7 +972,7 @@ TEST ///
     -- example: Gs_11 (one triangle, with edges sticking out)
     G = Gs_11
     R = oscRing(n-1,{}, CoefficientRing => QQ)
-    P = oscSystemReduced(G,R);
+    P = oscSystem(G,R);
     J = oscJacobian(G,R);
     I = P + trig R;
     dim I
@@ -990,7 +990,7 @@ TEST ///
     -- example: Gs_500 (planar symmetric triangulation of a triangle)
     G = Gs_500
     R = oscRing(n-1,{}, CoefficientRing => ZZ/32003)
-    P = oscSystemReduced(G,R);
+    P = oscSystem(G,R);
     J = oscJacobian(G,R);
     I = P + trig R; -- appears to have dim 0, degree 232 (these are OK in char 32003).
     getSols G -- only 
@@ -1056,7 +1056,7 @@ TEST ///
     G = graph ({0, 4, 1, 5, 2, 6, 3}, {{4, 0}, {0, 5}, {4, 1}, {4, 6}, {5, 2}, {5, 6}, {6, 3}})
     
     R = oscRing(n-1,{}, CoefficientRing => QQ)
-    P = oscSystemReduced(G,R);
+    P = oscSystem(G,R);
     J = oscJacobian(G,R);
     I = P + trig R;
     C = decompose I;
@@ -1073,7 +1073,7 @@ TEST ///
         << "---- doing graph " << G << endl;
         n := # vertices G;
         RC = oscRing(n-1,{}, CoefficientRing => CC);
-        PC = oscSystemReduced(G,RC);
+        PC = oscSystem(G,RC);
         JC = oscJacobian(G, RC);
         IC = PC + trig RC;
         elapsedTime realsols = findRealSolutions IC;

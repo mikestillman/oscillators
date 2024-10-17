@@ -47,7 +47,7 @@ Description
     closePort()
   Example
     R = oscRing(G, CoefficientRing => CC)
-    I = oscSystemReduced(G,R);
+    I = oscSystem(G,R);
     Jac = oscJacobian(G,R)
     realsols = findRealSolutions I
     assert(# realsols == 24)
@@ -98,15 +98,15 @@ doc ///
       oscRing G
       oscRing(G, CoefficientRing => CC)
   SeeAlso
-    oscSystemReduced
+    oscSystem
     oscJacobian
     displayGraph
 ///
 
 doc ///
   Key
-    oscSystemReduced
-    (oscSystemReduced, Graph, Ring)
+    oscSystem
+    (oscSystem, Graph, Ring)
   Headline
     the ideal of the reduced equilibrium points of a dynamical system of oscillators
   Usage
@@ -131,7 +131,7 @@ doc ///
       G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}})
       oscRing(G, CoefficientRing => CC)
       S = oo
-      I = oscSystemReduced(G,S)
+      I = oscSystem(G,S)
       netList I_*
     Text
       We can find approximations to the 26 complex solutions to this system.
@@ -184,7 +184,7 @@ doc ///
       G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}})
       oscRing(G, CoefficientRing => CC)
       S = oo
-      I = oscSystemReduced(G,S)
+      I = oscSystem(G,S)
       Jac = oscJacobian(G,S)
       assert(det Jac == 0)
       assert(Jac - transpose Jac == 0)
@@ -199,7 +199,7 @@ doc ///
       jacs/eigenvalues/identifyStability
   SeeAlso
     oscRing
-    oscSystemReduced
+    oscSystem
     findRealSolutions
     identifyStability
     eigenvalues
@@ -229,7 +229,7 @@ doc ///
       G = graph({0,1,2,3,4}, {{0,1},{1,2},{2,3},{0,3},{0,4}})
       oscRing(G, CoefficientRing => QQ)
       S = oo
-      I = oscSystemReduced(G,S)
+      I = oscSystem(G,S)
       dim I
       Jac = oscJacobian(G,S)
       assert(det Jac == 0)
@@ -252,7 +252,7 @@ doc ///
     is a warning message emitted (about non-regular solutions).
   SeeAlso
     oscRing
-    oscSystemReduced
+    oscSystem
     oscJacobian
     identifyStability
 ///
