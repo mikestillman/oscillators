@@ -1,5 +1,5 @@
-
-TEST ///
+-- Test 1
+TEST /// 
   -- A simple example to make sure this is working
 -*
   restart
@@ -7,18 +7,11 @@ TEST ///
 *-
   G = graph ({2, 0, 1, 3}, {{0, 2}, {1, 2}, {2, 3}, {0, 3}, {1, 3}})
 
-  S = oscRing 3
+  S = oscRing(G, Reduced => true)
   assert(numgens S == 6) -- basically: we set theta_0 to 0.
 
   IG = oscSystem(G,S)
-  Ians = ideal(y_2+y_3,
-      -x_2*y_1-x_3*y_1+x_1*y_2+x_1*y_3,
-      x_2*y_1-x_1*y_2-x_3*y_2+x_2*y_3-y_2,
-      x_3*y_1+x_3*y_2-x_1*y_3-x_2*y_3-y_3,
-      x_1^2+y_1^2-1,
-      x_2^2+y_2^2-1,
-      x_3^2+y_3^2-1
-      )
+  Ians = ideal(-y_0-y_1-y_3,x_3*y_0-x_0*y_3+y_0,x_3*y_1-x_1*y_3+y_1,-x_3*y_0-x_3*y_1+x_0*y_3+x_1*y_3+y_3,x_0^2+y_0^2-1,x_1^2+y_1^2-1,x_3^2+y_3^2-1)
   assert(IG == Ians)
   assert(gens IG == gens Ians) -- checking that we did not remove any of the equations.
   
@@ -31,26 +24,26 @@ TEST ///
   assert((numrows Jac, numcols Jac) == (4,4))
 ///
 
+-- Test 2
 TEST ///
   -- The square
 -*
   restart
   needsPackage "Oscillators"
 *-
-  G = graph ({2, 0, 1, 3}, {{0, 2}, {1, 2}, {2, 3}, {0, 3}, {1, 3}})
   G = graph( {0,1,2,3}, {{0,1}, {1,2}, {2,3}, {0,3}})
 
-  S = oscRing 3
+  S = oscRing(G, Reduced => true)
   assert(numgens S == 6) -- basically: we set theta_0 to 0.
 
   IG = oscSystem(G,S)
-  Ians = ideal(y_1+y_3,
       -x_2*y_1+x_1*y_2-y_1,
       x_2*y_1-x_1*y_2-x_3*y_2+x_2*y_3,
       x_3*y_2-x_2*y_3-y_3,
       x_1^2+y_1^2-1,
       x_2^2+y_2^2-1,x_3^2+y_3^2-1
       )
+  Ians = ideal(-y_1-y_3,x_2*y_1-x_1*y_2+y_1,-x_2*y_1+x_1*y_2+x_3*y_2-x_2*y_3,-x_3*y_2+x_2*y_3+y_3,x_1^2+y_1^2-1,x_2^2+y_2^2-1,x_3^2+y_3^2-1)
   assert(IG == Ians)
   assert(gens IG == gens Ians) -- checking that we did not remove any of the equations.
   
@@ -62,7 +55,7 @@ TEST ///
   assert(rank Jac == 3)
   assert((numrows Jac, numcols Jac) == (4,4))
   
-  numericalIrreducibleDecomposition IG
+  --numericalIrreducibleDecomposition IG
 ///
 
 
