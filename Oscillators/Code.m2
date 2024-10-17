@@ -30,7 +30,7 @@ oscRing(Graph, List) := Ring => opts -> (G, params) -> (
     R.numOscillators = # vertices G;
     R.Symbols = (c,s);
     R.Graph = G;
-    R.Reduced = true;
+    R.Reduced = opts.Reduced;
     R
 )
 oscRing(Graph) := Ring => opts -> G -> oscRing(G, {}, opts)
