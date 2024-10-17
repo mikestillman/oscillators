@@ -37,12 +37,6 @@ TEST ///
   assert(numgens S == 6) -- basically: we set theta_0 to 0.
 
   IG = oscSystem(G,S)
-      -x_2*y_1+x_1*y_2-y_1,
-      x_2*y_1-x_1*y_2-x_3*y_2+x_2*y_3,
-      x_3*y_2-x_2*y_3-y_3,
-      x_1^2+y_1^2-1,
-      x_2^2+y_2^2-1,x_3^2+y_3^2-1
-      )
   Ians = ideal(-y_1-y_3,x_2*y_1-x_1*y_2+y_1,-x_2*y_1+x_1*y_2+x_3*y_2-x_2*y_3,-x_3*y_2+x_2*y_3+y_3,x_1^2+y_1^2-1,x_2^2+y_2^2-1,x_3^2+y_3^2-1)
   assert(IG == Ians)
   assert(gens IG == gens Ians) -- checking that we did not remove any of the equations.
@@ -58,8 +52,7 @@ TEST ///
   --numericalIrreducibleDecomposition IG
 ///
 
-
-
+-- Test 3
 TEST /// 
 -*
   restart
@@ -101,6 +94,7 @@ TEST ///
     -- upshot: ideal is radical zero-dim, 4 standard solutions, 2 twisted solutions (unstable), SS
 ///
 
+-- Test 3
 ///
 -*
   restart
@@ -168,6 +162,7 @@ TEST ///
     
 ///
 
+-- Test 4
 TEST ///
   -- analyze stability of all solutions given a graph G
   G = graph({0,1,2,3},{{0,1},{1,2},{2,3},{0,3}})
@@ -395,6 +390,7 @@ TEST ///
   -- exactly one point stable.
 ///
 
+--Test 5
 TEST ///
 -*
   restart
@@ -430,6 +426,7 @@ TEST ///
       )
 ///
 
+-- Test 6
 TEST ///
   restart
   needsPackage "Oscillators"
@@ -573,7 +570,7 @@ intersect decompose I1 == I1
 CkSegreTrig 5        
 ///
 
-
+-- Test 7
 TEST ///
   --Let's do all connected graphs with 4 vertices, which do not have a vertex with degree 1
   restart
@@ -736,6 +733,7 @@ TEST ///
     -- all 8 standard points occur as associated primes.
 ///
 
+-- Test 8
 TEST ///
 -- Test: oscJacobian and reduced version return the same eigenvalues, except for
 --  one extra eigenvalue of 0.0 for the non-reduced form.
@@ -763,6 +761,7 @@ TEST ///
     evsJ2 = for phi in evs list eigenvalues phi J2
 ///
 
+--Test 9
 TEST ///
   --Let's do all connected graphs with 5 vertices -- YYY
   restart
@@ -843,6 +842,7 @@ TEST ///
     
 ///
 
+-- Test 10
 TEST ///
 -*
   restart
@@ -945,6 +945,7 @@ TEST ///
     degree I1
 ///
 
+--Test 11
 TEST ///
 -- MES XXX
 -*
@@ -1081,6 +1082,7 @@ TEST ///
     J % ideal(x_1, x_2, x_3+1, x_4, x_5, x_6 + 1, y_1+1, y_2-1, y_3, y_4+1, y_5-1,y_6)
 ///
 
+--Test 12
 TEST ///
     n = 8
     Gstrs = flatten for i from n-1 to binomial(n,2)-1 list generateGraphs(n,i, OnlyConnected=>true)
@@ -1088,6 +1090,7 @@ TEST ///
     assert(#Gstrs == 11116)
 ///
 
+--Test 13
 TEST ///
     n = 9
     Gstrs = flatten for i from n-1 to binomial(n,2)-1 list generateGraphs(n,i, OnlyConnected=>true);
@@ -1095,6 +1098,7 @@ TEST ///
     assert(#Gstrs == 261079)
 ///
 
+-- Test 14
 TEST ///
     n = 10
     Gstrs = flatten for i from n-1 to binomial(n,2)-1 list generateGraphs(n,i, OnlyConnected=>true);
@@ -1102,6 +1106,7 @@ TEST ///
     assert(#Gstrs == 11716570)
 ///
 
+--Test 15
 TEST ///
     -- this one might take a while...
     -- maybe we need to save these to disk, not try to load them in.
