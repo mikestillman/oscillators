@@ -129,13 +129,14 @@ vertexSpanningPolynomial(Graph) := G -> (
     det submatrix(VG, 1..#vertices G - 1, 1..#vertices G - 1) / cosine (vertices G)_0
 )
 
-standardSols = method()
-standardSols(Graph) := opts -> G -> (
-    R := oscRing(G);
-    sine := (i) -> (select(R.generators, k -> toString k == toString (R.Symbols_1)_i))_0;
-    cosine := (i) -> (select(R.generators, k -> toString k == toString (R.Symbols_0)_i))_0;
+standardSols = method(Options => {Reduced => false})
+standardSols(Graph, Ring) := opts -> (G,R) -> (
+    vertexList := if opts.Reduced then drop(vertices G, 1) else vertices G;
+    sine := (i) -> if member(i, vertexList) then (select(R.generators, k -> toString k == toString (R.Symbols_1)_i))_0 else 0_R;
+    cosine := (i) -> if member(i, vertexList) then (select(R.generators, k -> toString k == toString (R.Symbols_0)_i))_0 else 1_R;
     minors(2, matrix for i in vertices G list {sine i, cosine i})
 )
+standardSols(Graph) := opts -> G -> standardSols(G, oscRing(G, opts))
 ----------------------------------------------------------------------------------
 -- Finding solutions: beware, these might give duplicates and/or miss solutions --
 ----------------------------------------------------------------------------------
