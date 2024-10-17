@@ -19,7 +19,6 @@ newPackage(
 export {
     "hasNoLeaf",
     "oscRing",
-    "oscSystemReduced",
     "oscQuadrics",
     "oscJacobian",
     "identifyStability",
