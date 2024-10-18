@@ -119,25 +119,25 @@ ringOscillatorGraph(ZZ,ZZ) := (n,k) -> (
     )
 
 vertexSpanningPolynomial = method()
-vertexSpanningPolynomial(Graph) := G -> (
-    R := oscRing(G);
+vertexSpanningPolynomial(Graph, Ring) := (G,R) -> (
     cosine := (i) -> (select(R.generators, k -> toString k == toString (R.Symbols_0)_i))_0;
     VG := matrix for i in vertices G list for j in vertices G list (
         if i === j then (
             sum for n in toList neighbors(G,i) list cosine n
         ) else if member(j, neighbors(G,i)) then - cosine i else 0
     );
-    det submatrix(VG, 1..#vertices G - 1, 1..#vertices G - 1) / cosine (vertices G)_0
+    det submatrix(VG, 1..#vertices G - 1, 1..#vertices G - 1) // cosine (vertices G)_0
 )
+vertexSpanningPolynomial(Graph) := G -> vertexSpanningPolynomial(G, oscRing(G))
 
 standardSols = method(Options => {Reduced => false})
 standardSols(Graph, Ring) := opts -> (G,R) -> (
-    vertexList := if opts.Reduced then drop(vertices G, 1) else vertices G;
+    vertexList := if opts.Reduced or R.Reduced then drop(vertices G, 1) else vertices G;
     sine := (i) -> if member(i, vertexList) then (select(R.generators, k -> toString k == toString (R.Symbols_1)_i))_0 else 0_R;
     cosine := (i) -> if member(i, vertexList) then (select(R.generators, k -> toString k == toString (R.Symbols_0)_i))_0 else 1_R;
     minors(2, matrix for i in vertices G list {sine i, cosine i})
 )
-standardSols(Graph) := opts -> G -> standardSols(G, oscRing(G, opts))
+standardSols(Graph) := opts -> G -> standardSols(G, oscRing(G, opts), opts)
 ----------------------------------------------------------------------------------
 -- Finding solutions: beware, these might give duplicates and/or miss solutions --
 ----------------------------------------------------------------------------------
