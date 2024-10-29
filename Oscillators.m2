@@ -24,26 +24,21 @@ export {
     "identifyStability",
     "findRealSolutions",
     "isStableSolution",
-    "outputSolutions",
     "getAngles",
     "getLinearlyStableSolutions",
     "allUniquePrincipalMinors",
-    "twisted",
     "vertexSpanningPolynomial",
+    "standardSols",
     -- symbols
-    "numOscillators",
     "Symbols",
+    "numOscillators",
     "Radians",
     "Stable",
     "Unstable",
     "Semistable",
     "Modulo",
-    -- examples with weighted graphs
     "oscSystem",
     "trig",
-    "ringOscillatorGraph",
-    "egRingOsc",
-    "egRingOscWeighted"
     }
 
 
