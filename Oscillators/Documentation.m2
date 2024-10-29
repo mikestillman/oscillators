@@ -13,6 +13,19 @@ doc ///
 ///
 *-
 
+undocumented {
+  (oscRing, Graph, List),
+  Symbols,
+  trig,
+  (trig, Ring),
+  Stable,
+  Semistable,
+  Unstable,
+  Modulo,
+  Radians,
+  numOscillators
+}
+
 doc ///
 Key
   Oscillators
@@ -46,7 +59,7 @@ Description
     visualize G -- important: click on End session in browser window before continuing
     closePort()
   Example
-    R = oscRing(G, CoefficientRing => CC)
+    R = oscRing(G, CoefficientRing => CC, Reduced => true)
     I = oscSystem(G,R);
     Jac = oscJacobian(G,R)
     realsols = findRealSolutions I
@@ -65,6 +78,10 @@ doc ///
   Key
     oscRing
     (oscRing, Graph)
+    (oscRing, ZZ)
+    [oscRing, Reduced]
+    [oscRing, CoefficientRing]
+    [oscRing, Symbols]
   Headline
     create a polynomial ring for a given graph or number of oscillators
   Usage
@@ -74,29 +91,30 @@ doc ///
     n:ZZ
       The number of oscillators
     G:Graph
-      The number of oscillators will be one less than the number of vertices of $G$
+      The number of oscillators is the number of vertices in the Graph
     CoefficientRing => Ring
       the coefficient ring to use, for numerical work, @TO "CC"@ is a good choice
     Symbols => Sequence
       a sequence of two symbols.  The first refers to the cosine of the given angles
         and the second refers to the sine of the given angles
+    Reduced => Boolean
+      if true, then the angles are reduced to the first angle being 0. That is, the number of oscillators will be one less than the number of vertices of $G$
   Outputs
     :Ring
   Description
     Text
       This function returns a polynomial ring in $2n$ variables
-      representing the cosine and the sine of $n$ angles.
+      representing the cosine and the sine of $n$ angles. Inputting a number assumes that the vertices are labeled $0, \ldots, n$.
     Example
       oscRing(3, CoefficientRing => CC)
-      oscRing(3, CoefficientRing => CC, Start=>0)
-      oscRing(3, CoefficientRing => CC, Start=>0, Symbols=>{c, s})
+      oscRing(3, CoefficientRing => CC, Symbols=>{c, s})
     Text
-      If one gives a graph, then the number of angles considered
+      If one gives a graph with Reduced => true, then the number of angles considered
       is one less than the number of vertices of the graph.
     Example
       G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}})
       oscRing G
-      oscRing(G, CoefficientRing => CC)
+      oscRing(G, CoefficientRing => CC, Reduced => true)
   SeeAlso
     oscSystem
     oscJacobian
@@ -107,19 +125,26 @@ doc ///
   Key
     oscSystem
     (oscSystem, Graph, Ring)
+    (oscSystem, Graph)
+    [oscSystem, Reduced]
   Headline
     the ideal of the reduced equilibrium points of a dynamical system of oscillators
   Usage
-    oscSystemReduce
+    oscSystem(G,R)
+    oscSystem(G)
   Inputs
     G:Graph
-    S:Ring
+      an undirected, connected graph $G$
+    R:Ring
+      created with @TO oscRing@
+    Reduced => Boolean
+      if true, then the angles are reduced to the first angle being 0. That is, the number of oscillators will be one less than the number of vertices of $G$
   Outputs
     :Ideal
-      in the ring S
+      in the ring R
   Description
     Text
-      $S$ should be a ring created with @TO "oscRing"@.  The dynamical system
+      $R$ should be a ring created with @TO "oscRing"@.  The dynamical system
       involved is the oscillator system associated to $G$: one angle per vertex.
       If $a_{ij} = 1$ if $(i,j)$ is an edge of the undirected graph $G$, 
       and is zero otherwise, then the system is $d\theta_i/dt = \sum_j a_{ij} \sin(\theta_j - \theta_i)$
@@ -130,8 +155,8 @@ doc ///
     Example
       G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}})
       oscRing(G, CoefficientRing => CC)
-      S = oo
-      I = oscSystem(G,S)
+      R = oo
+      I = oscSystem(G,R)
       netList I_*
     Text
       We can find approximations to the 26 complex solutions to this system.
@@ -162,21 +187,29 @@ doc ///
   Key
     oscJacobian
     (oscJacobian,Graph,Ring)
+    (oscJacobian, Graph)
+    (oscJacobian, Ideal)
+    [oscJacobian, Reduced]
   Headline
     create the Jacobian for the oscillator system associated to a graph
   Usage
-    J = oscJacobian(G,S)
+    oscJacobian(G,R)
+    oscJacobian(I)
+    oscJacobian(G)
   Inputs
     G:Graph
-      an undirected, connected graph $G$ on vertices $0, \ldots, n-1$, where $n$
-      is the number of vertices of $G$
+      an undirected, connected graph $G$ 
     S:Ring
       created with @TO oscRing@
+    I:Ideal
+      an ideal, intended to be ideal created by oscSystem
+    Reduced => Boolean
+      if true, then the angles are reduced to the first angle being 0. That is, the number of oscillators will be one less than the number of vertices of $G$
   Outputs
     :Matrix
       the $n \times n$ Jacobian matrix of the system, as a matrix of polynomials
       involving the cosines and sines of angles $\theta_1, \ldots, \theta_{n-1}$, where we
-      set $\theta_0 = 0$.
+      set $\theta_0 = 0$ if $\texttt{Reduced => true}$
   Description
     Text
       The matrix is a symmetric $n \times n$  matrix (with determinant zero).
@@ -209,13 +242,17 @@ doc ///
   Key
     findRealSolutions
     (findRealSolutions, Ideal)
+    (findRealSolutions, Graph)
   Headline
     find real solutions, at least one per component for well-conditioned systems
   Usage
     findRealSolutions I
+    findRealSolutions G
   Inputs
     I:Ideal
       an ideal in a polynomial ring over QQ or RR or CC.
+    G:Graph
+      an undirected, connected graph $G$
   Outputs
     :List
       of all the real solutions that were found
@@ -227,8 +264,7 @@ doc ///
       We use this in the following example.
     Example
       G = graph({0,1,2,3,4}, {{0,1},{1,2},{2,3},{0,3},{0,4}})
-      oscRing(G, CoefficientRing => QQ)
-      S = oo
+      S = oscRing(G, CoefficientRing => QQ, Reduced => true)
       I = oscSystem(G,S)
       dim I
       Jac = oscJacobian(G,S)
@@ -261,16 +297,21 @@ doc ///
   Key
     oscQuadrics
     (oscQuadrics, Graph, Ring)
+    (oscQuadrics, Graph)
+    [oscQuadrics, Reduced]
   Headline
     the quadrics of the oscillator system associated to a graph
   Usage
     oscQuadrics(G,R)
+    oscQuadrics(G)
   Inputs
     G:Graph
       an undirected, connected graph $G$ on vertices $0, \ldots, n-1$, where $n$
       is the number of vertices of $G$
     R:Ring
       created with @TO oscRing@
+    Reduced => Boolean
+      if true, then the angles are reduced to the first angle being 0. That is, the number of oscillators will be one less than the number of vertices of $G$
   Outputs
     :Ideal
       in the ring R
@@ -287,3 +328,250 @@ doc ///
       I = oscQuadrics(G,S)
       netList I_*
 ///
+
+doc ///
+Key
+  standardSols
+  (standardSols, Graph, Ring)
+  (standardSols, Graph)
+  [standardSols, Reduced]
+Headline
+  find the "standard solutions" for the oscillator system associated to a graph
+Usage
+  standardSols(G,R)
+  standardSols(G)
+Inputs
+  G:Graph
+    an undirected, connected graph $G$
+  R:Ring
+    created with @TO oscRing@
+  Reduced => Boolean
+    if true, then the angles are reduced to the first angle being 0. That is, the number of oscillators will be one less than the number of vertices of $G$
+Outputs
+  :Ideal
+    a list of the "standard solutions" that you get where all the angles are the same. This is the same as a certain Segre variety.
+Description
+  Text
+    The oscillator ideal associated to a graph constructed by @TO oscQuadrics@ always contains the "standard solutions" as a minimal prime. These standard solutions are the Segre variety $\mathbb{P}^1\times \mathbb{P}^{n-1}$, where $n$ is the number of vertices of the graph. These are the solutions where all the angles are the same.
+  Example
+    G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}});
+    R = oscRing(G);
+    I = oscQuadrics(G, R);
+    any(decompose I, P -> P == standardSols(G, R))
+SeeAlso
+  oscRing
+  oscSystem
+  oscJacobian
+///
+
+doc ///
+Key 
+  vertexSpanningPolynomial
+  (vertexSpanningPolynomial, Graph)
+  (vertexSpanningPolynomial, Graph, Ring)
+Headline
+  computes the vertex spanning polynomial
+Usage
+  vertexSpanningPolynomial(G)
+  vertexSpanningPolynomial(G, R)
+Inputs
+  G:Graph
+    an undirected, connected graph $G$
+  R:Ring
+    created with @TO oscRing@
+Outputs
+  :PolynomialRing
+    the vertex spanning polynomial of the graph $G$ inside $R$.
+Description
+  Text
+    Let $S$ be the set of all spanning trees of the graph $G$. For each spanning tree $T$, let $d_i$ be the degree of $v_i$ in $T$. The vertex spanning polynomial of a graph $G$ is defined as $\sum_{T\in S} \prod_{v_i \in T} x_i^{d_i-1}$. The factorization of this polynomial is related to the number of components of the oscillator ideal of the graph computed via @TO oscQuadrics@.
+  Example
+    G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}});
+    vertexSpanningPolynomial G
+SeeAlso
+  oscQuadrics
+///
+
+doc ///
+Key
+  getAngles
+  (getAngles, ZZ, List)
+  [getAngles, Radians]
+Headline
+  Compute angles from a list of solutions
+Usage
+  getAngles(n, S)
+Inputs
+  n: ZZ
+    An integer representing the number of angles.
+  sols: List
+    A list of solutions, where each solution is a list of cosine and sine values.
+  Radians => Boolean
+    An optional boolean flag (default is true). If true, the angles are returned in radians; otherwise, they are returned in degrees.
+Outputs
+  : List
+    A list of angles computed from the given solutions.
+Description
+  Text
+    The function getAngles computes the angles from a list of solutions. Each solution is assumed to be a list of cosine and sine values for the angles. The function returns the angles in radians or degrees based on the Radians option.
+  Example
+    getAngles(2, {{1, 0, 0, 1}, {0, 1, 1, 0}}, Radians => false)
+SeeAlso
+  getLinearlyStableSolutions
+  findRealSolutions
+///
+
+doc ///
+Key
+  identifyStability
+  (identifyStability, Matrix, List)
+  (identifyStability, BasicList)
+  [identifyStability, Tolerance]
+Headline
+  Identify the stability of a list of eigenvalues, or of potential solutions to the oscillator system
+Usage
+  identifyStability(Jac, sols)
+  identifyStability(eigenvals)
+Inputs
+  Jac: Matrix
+    A matrix representing the Jacobian of the oscillator system.
+  sol: List
+    A potential solution to the oscillator system.
+  eigenvals: BasicList
+    An eigenvalue
+  Tolerance => RR
+    An optional real number representing the tolerance for the stability check (default is 1e-10).
+Outputs
+  : BasicList
+    A list of stability values for the given solutions or eigenvalues.
+Description
+  Text
+    The function identifyStability computes the stability of a list of solutions or eigenvalues. For solutions, the function computes the eigenvalues of the Jacobian at each solution and determines the stability based on the sign of the real part of the eigenvalues. For eigenvalues, the function determines the stability based on the sign of the real part of the eigenvalues.
+  Example
+    G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}});
+    R = oscRing(G, Reduced => true);
+    I = oscSystem(G, R);
+    Jac = oscJacobian(G, R);
+    realsols = findRealSolutions I;
+    jacs = for pt in realsols list sub(Jac, matrix{pt});
+    eigenvals = jacs/eigenvalues;
+    eigenvals / identifyStability
+    realsols/(pt -> prepend(identifyStability(Jac, pt), pt))
+SeeAlso
+  oscJacobian
+  findRealSolutions
+///
+
+doc ///
+Key
+  hasNoLeaf
+  (hasNoLeaf, Graph)
+Headline
+  Check if a graph has no leaf vertices
+Usage 
+  hasNoLeaf(G)  
+Inputs
+  G: Graph
+    An undirected graph
+Outputs
+  : Boolean
+    True if the graph has no leaf vertices, false otherwise
+Description
+  Text
+    The function hasNoLeaf checks if a given graph has no leaf vertices. A leaf vertex is a vertex with degree 1, meaning it is connected to only one other vertex in the graph.
+  Example
+    G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}});
+    hasNoLeaf(G)
+///
+
+doc ///
+Key
+  getLinearlyStableSolutions
+  (getLinearlyStableSolutions, Graph)
+Headline
+  Compute linearly stable solutions for the Kuramoto oscillator system associated to a graph
+Usage
+  getLinearlyStableSolutions(G)
+Inputs
+  G: Graph
+    An undirected, connected graph
+Outputs
+  : List
+    A list of linearly stable solutions for the Kuramoto oscillator system associated to the graph
+Description
+  Text
+    The function getLinearlyStableSolutions computes the linearly stable solutions for the Kuramoto oscillator system associated to a given graph. The Kuramoto oscillator system is a system of coupled phase oscillators, where the dynamics of each oscillator is given by the Kuramoto model. The linear stability of a solution is determined by the eigenvalues of the Jacobian matrix of the system evaluated at the solution.
+  Example
+    G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}});
+    getLinearlyStableSolutions(G)
+SeeAlso
+  findRealSolutions
+  identifyStability
+///
+
+doc ///
+Key
+  allUniquePrincipalMinors
+  (allUniquePrincipalMinors, Matrix)
+  [allUniquePrincipalMinors, Modulo]
+Headline
+  Compute all unique principal minors of a given matrix
+Usage
+  allUniquePrincipalMinors(M)
+Inputs
+  M: Matrix
+    A square matrix
+  Modulo => Ideal
+    An optional ideal to compute the principal minors modulo the given ideal
+Outputs 
+  : List
+    A list of all unique principal minors of the given matrix
+Description
+  Text
+    The function allUniquePrincipalMinors computes all unique principal minors of a given square matrix. A principal minor of a matrix is the determinant of a submatrix obtained by deleting the same set of rows and columns from the matrix. The function returns a list of all unique principal minors of the given matrix.
+  Example
+    G = graph({0,1,2,3},{{0,1},{1,2},{2,3},{0,3}})
+    S = oscRing(G, CoefficientRing => QQ, Reduced => true)
+    I = oscSystem(G,S);
+    C = decompose I;
+    J = oscJacobian(G,S)
+    netList for i in C list allUniquePrincipalMinors(-J, Modulo=>i)
+    -- by looking at each one, all points but one are unstable.
+SeeAlso
+  oscJacobian
+  identifyStability
+///
+
+doc ///
+Key
+  isStableSolution
+  (isStableSolution, Matrix, List)
+Headline
+  Check if a given solution is stable for the Kuramoto oscillator system
+Usage
+  isStableSolution(Jac, sol)
+Inputs
+  Jac: Matrix
+    A matrix representing the Jacobian of the Kuramoto oscillator system
+  sol: List
+    A potential solution to the Kuramoto oscillator system
+Outputs
+  : Boolean
+    True if the solution is stable, false otherwise
+Description
+  Text
+    The function isStableSolution checks if a given solution is stable for the Kuramoto oscillator system. The stability of a solution is determined by the eigenvalues of the Jacobian matrix of the system evaluated at the solution. If all eigenvalues have negative real parts, the solution is considered stable.
+  Example
+    G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}});
+    R = oscRing(G, Reduced => true);
+    I = oscSystem(G, R);
+    Jac = oscJacobian(G, R);
+    realsols = findRealSolutions I;
+    select(realsols, S -> isStableSolution(Jac, S))
+SeeAlso
+  oscJacobian
+  findRealSolutions
+  identifyStability
+///
+
+
