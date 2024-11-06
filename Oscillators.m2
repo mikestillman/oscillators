@@ -63,11 +63,8 @@ load(baseDirectory | "Oscillators/Documentation.m2")
 ----- TESTS
 --------------------------------------------------------------------
 load(baseDirectory | "Oscillators/Tests.m2")
-end------------------------------------
 
---------------------------------------------------------------------
------ SCRATCH SPACE
---------------------------------------------------------------------
+end------------------------------------
 
 restart
 uninstallPackage "Oscillators";
@@ -76,6 +73,10 @@ installPackage "Oscillators"
 check Oscillators
 debug needsPackage "Oscillators";
 
+
+--------------------------------------------------------------------
+----- SCRATCH SPACE
+--------------------------------------------------------------------
 
 restart
 needsPackage "Oscillators"
