@@ -33,6 +33,66 @@ Headline
   generation and analysis of oscillator steady states for small graphs
 Description
   Text
+    @SUBSECTION "Computations from the paper [Harrington, Schenck, Stillman, Algebraic aspects of homogeneous Kuramoto oscillators]"@
+  Text
+    @UL {
+        TO "Generation of all SCT (simple, connected, 2-connected) graphs on small numbers of vertices",
+        TO "B",
+        TO "C",
+        TO "D",
+        TO "E",
+        TO "F1"
+        }@
+  Text
+    This package supports computations with Kuramoto oscillators, including computations for the paper [HSS], Harrington, Schenck, Stillman, @arXiv("2312.16069", "Algebraic aspects of homogeneous Kuramoto oscillators")@.
+  Text
+    We show a possible workflow using this package.  We use @TO "NautyGraphs::NautyGraphs"@
+    to generate graphs of small size.  We use @TO "Visualize::Visualize"@ to look at these graphs.
+  Example
+    needsPackage "Oscillators"
+    needsPackage "NautyGraphs"
+    needsPackage "Visualize"
+    vert4edges4 = generateGraphs(4, 4)
+    Gs = vert4edges4/stringToGraph
+  Text
+    Now, for each graph we consider the oscillator dynamical system.
+    
+    Let's do an example, using a graph with 5 vertices and 7 edges
+  Example
+    Gstrs = generateGraphs(5, OnlyConnected => true, MinDegree => 2);
+    Gs = Gstrs/stringToGraph
+    Gcycle5 = Gs_3
+    K5 = Gs_-1
+  Pre
+    openPort "8083"
+    visualize G -- important: click on End session in browser window before continuing
+    closePort()
+  Example
+    G = Gcycle5
+    R = oscRing(G, CoefficientRing => CC, Reduced => true)
+    I = oscSystem(G, R);
+    netList I_*
+    Jac = oscJacobian(G,R)
+    realsols = findRealSolutions I;
+    netList realsols
+    assert(# realsols == 30)
+    stablesols = select(realsols, p -> Stable === identifyStability(Jac,p))
+    tally realsols/(p -> identifyStability(Jac, p))
+    getAngles(4, stablesols, Radians=>false)
+    sols = solveSystem I_*;
+    sols = sols/coordinates;
+    assert(#sols == 30)
+    tally sols/(p -> identifyStability(Jac, p))
+    netList sols
+///
+
+///
+Key
+  Oscillators
+Headline
+  generation and analysis of oscillator steady states for small graphs
+Description
+  Text
     We show a possible workflow using this package.  We use @TO "NautyGraphs::NautyGraphs"@
     to generate graphs of small size.  We use @TO "Visualize::Visualize"@ to look at these graphs.
   Example
@@ -300,7 +360,7 @@ doc ///
     (oscQuadrics, Graph)
     [oscQuadrics, Reduced]
   Headline
-    the quadrics of the oscillator system associated to a graph
+    find the homogeneous quadrics in the homogeneous Kuramoto ideal
   Usage
     oscQuadrics(G,R)
     oscQuadrics(G)
@@ -575,3 +635,106 @@ SeeAlso
 ///
 
 
+doc ///
+  Key
+    "Generation of all SCT (simple, connected, 2-connected) graphs on small numbers of vertices"
+  Headline
+    generating all SCT graphs on n vertices
+  Description
+    Text
+      Using the NautyGraphs package, we generate the list of
+      isomorphism classes of the SCT (simple, connected, 2-connected)
+      graphs with a fixed number of vertices.
+    Example
+      needsPackage "Oscillators"
+      needsPackage "NautyGraphs"
+      Gstrs = generateGraphs(5, OnlyConnected => true, MinDegree => 2);
+      #Gstrs == 11
+      Gstrs = generateGraphs(6, OnlyConnected => true, MinDegree => 2);
+      #Gstrs == 61
+      Gstrs = generateGraphs(7, OnlyConnected => true, MinDegree => 2);
+      #Gstrs == 507
+      Gstrs = generateGraphs(8, OnlyConnected => true, MinDegree => 2);
+      #Gstrs == 7442
+      Gstrs = generateGraphs(9, OnlyConnected => true, MinDegree => 2);
+      #Gstrs == 197772
+    Text
+      Here is a simple table with all of these numbers.
+    Example
+      netList for n from 5 to 9 list {n, #generateGraphs(n, OnlyConnected => true, MinDegree => 2)}
+  SeeAlso
+///
+
+-- XXX
+
+doc ///
+  Key
+    "Checking the codimension of the IG ideal"
+  Headline
+    generating all SCT graphs on n vertices
+  Description
+    Text
+      We first construct the ideal $I_G$ for a specific graph $G$ on 5 vertices.
+      We use the 5-cycle as the specific example.
+    Example
+      needsPackage "Oscillators"
+      needsPackage "NautyGraphs"
+      Gstrs = generateGraphs(5, OnlyConnected => true, MinDegree => 2);
+      Gs = Gstrs/stringToGraph
+      G = Gs_3
+      R = oscRing(5, Reduced => false);
+      IG = oscQuadrics(G, R)
+      netList IG_*
+      codim IG
+    Text
+      Each $I_G$ on $n$ vertices has $n-1$ minimal generators.
+      This particular $I_G$ has the same codimension $n-1=4$, so is a complete intersection.
+      This ideal decomposes as an intersection of 2 prime ideals.
+    Example
+      numgens trim IG
+      codim IG
+      comps = decompose IG;
+      netList comps_0_*, netList comps_1_*
+      comps/codim
+      comps/degree
+      comps/isPrime
+    Text
+      Let's see how many graphs are not complete intersections, i.e. have codimension
+      $\le n-2$.
+    Example
+      # select(Gs, G -> (
+          IG = oscQuadrics(G, R);
+          codim IG <= #vertices G - 2
+          ))
+    Example
+      n = 6
+      Gstrs = generateGraphs(n, OnlyConnected => true, MinDegree => 2);
+      Gs = Gstrs/stringToGraph;
+      R = oscRing(n, Reduced => false);
+      # select(Gs, G -> (
+          IG = oscQuadrics(G, R);
+          codim IG <= #vertices G - 2
+          ))
+    Pre
+      n = 7
+      Gstrs = generateGraphs(n, OnlyConnected => true, MinDegree => 2);
+      Gs = Gstrs/stringToGraph;
+      R = oscRing(n, Reduced => false);
+      # select(Gs, G -> (
+          IG = oscQuadrics(G, R);
+          elapsedTime codim IG <= #vertices G - 2
+          ))
+    Text
+      The next one takes some time.
+    Pre
+      n = 8
+      Gstrs = generateGraphs(n, OnlyConnected => true, MinDegree => 2);
+      Gs = Gstrs/stringToGraph;
+      R = oscRing(n, Reduced => false);
+      # select(Gs, G -> (
+          IG = oscQuadrics(G, R);
+          codim IG <= #vertices G - 2
+          ))
+  
+  SeeAlso
+///

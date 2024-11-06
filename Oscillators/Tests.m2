@@ -196,8 +196,8 @@ TEST ///
     -- there are (at least) two ways to view graphs in Macaulay2.  The first 
     -- just pops up a jpeg picture using graphviz (which you must have
     -- installed on your system):
-    displayGraph Gs_0
-    Gs/displayGraph
+    -- displayGraph Gs_0
+    -- Gs/displayGraph
 
     -- The next lines are for viewing graphs in your browser.
     -- This generally gives a nicer picture than graphviz, and you can change the look,
@@ -378,9 +378,9 @@ TEST ///
     Gstrs = flatten for i from 4 to 10 list generateGraphs(n,i, OnlyConnected=>true)
     Gs = Gstrs/stringToGraph
     assert(#Gs == 21)
-    openPort "8080"
-    visualize Gs_3
-    closePort()
+    -- openPort "8080"
+    -- visualize Gs_3
+    -- closePort()
 
     RC = oscRing(n-1,{}, CoefficientRing => CC)
     R = oscRing(n-1,{}, CoefficientRing => QQ)
@@ -414,9 +414,9 @@ TEST ///
 
     -- the only one with more than one stable (isolated) solution is the pentagon ring.
     G = Gs_7
-    openPort "8081"
-    visualize G
-    closePort()
+    -- openPort "8081"
+    -- visualize G
+    -- closePort()
     
     dims = for G in drop(Gs,-1) list (
         << "doing " << G << endl;
@@ -426,24 +426,24 @@ TEST ///
         G => tally (C/dim)
         )
     positions(dims, x -> x#1#?1 or x#1#?2)
-    openPort "8081"
-    visualize dims#4#0
-    visualize dims#8#0
-    visualize dims#9#0
-    visualize dims#12#0
-    visualize dims#13#0
-    visualize dims#15#0
-    visualize dims#16#0
-    visualize dims#17#0
-    visualize dims#19#0
+    -- openPort "8081"
+    -- visualize dims#4#0
+    -- visualize dims#8#0
+    -- visualize dims#9#0
+    -- visualize dims#12#0
+    -- visualize dims#13#0
+    -- visualize dims#15#0
+    -- visualize dims#16#0
+    -- visualize dims#17#0
+    -- visualize dims#19#0
     
-    visualize dims#5#0
-    visualize dims#6#0    
-    visualize dims#7#0    
-    visualize dims#10#0    
-    visualize dims#11#0    
-    visualize dims#14#0    
-    closePort()
+    -- visualize dims#5#0
+    -- visualize dims#6#0    
+    -- visualize dims#7#0    
+    -- visualize dims#10#0    
+    -- visualize dims#11#0    
+    -- visualize dims#14#0    
+    -- closePort()
     
 ///
 

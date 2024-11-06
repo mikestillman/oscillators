@@ -62,11 +62,12 @@ load(baseDirectory | "Oscillators/Documentation.m2")
 ----- TESTS
 --------------------------------------------------------------------
 load(baseDirectory | "Oscillators/Tests.m2")
-end
+end------------------------------------
 
 --------------------------------------------------------------------
 ----- SCRATCH SPACE
 --------------------------------------------------------------------
+restart
 uninstallPackage "Oscillators";
 restart
 installPackage "Oscillators"
