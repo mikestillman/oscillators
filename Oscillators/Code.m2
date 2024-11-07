@@ -242,20 +242,26 @@ getAngles(ZZ,List) := opts -> (nangles, sols) -> (
 
 getLinearlyStableSolutions = method()
 getLinearlyStableSolutions Graph := G -> (
-    <<  "---- doing graph " << G << " --------------" << endl;
     n := # vertices G;
     RC := oscRing(n, CoefficientRing => CC, Reduced => true);
     IC := trim oscSystem(G,RC);
-    --<< see IC << endl;
     JC := oscJacobian(G, RC);
     elapsedTime realsols := findRealSolutions IC;
     stablesols := for pt in realsols list (
         result := identifyStability(JC, pt, Tolerance=>1e-10);
         if result == Stable then pt else continue
         );
+    stablesols
+    )
+
+showExoticSolutions = method()
+showExoticSolutions Graph := G -> (
+    stablesols := getLinearlyStableSolutions G;
+    n := #vertices G;
     if #stablesols > 1 then (
-        << "-- extra stable solutions! --" << endl;
+        << "-- found extra exotic solutions for graph " << G << " --" << endl;
         << netList stablesols << endl;
+        << "-- angles (in degrees), first angle is zero and omitted --" << endl;
         << netList (getAngles(n-1, stablesols, Radians=>false)) << endl;
         );
     stablesols

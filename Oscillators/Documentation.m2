@@ -37,11 +37,12 @@ Description
   Text
     @UL {
         TO "Generation of all SCT (simple, connected, 2-connected) graphs on small numbers of vertices",
-        TO "B",
-        TO "C",
-        TO "D",
-        TO "E",
-        TO "F1"
+        TO "Checking the codimension and irreducible decomposion of the IG ideal",
+        TO "SCT graphs with exotic solutions",
+        TO "Example 4.1: unique graph on 8 vertices with exotic solutions and no induced cycle of length at least 5",
+        TO "Example 4.2: a K5 and pentagon glued along an edge",
+        TO "Example 4.3: examples of gluing two cycles along an edge",
+        TO "Example 4.4: The square within a square"
         }@
   Text
     This package supports computations with Kuramoto oscillators, including computations for the paper [HSS], Harrington, Schenck, Stillman, @arXiv("2312.16069", "Algebraic aspects of homogeneous Kuramoto oscillators")@.
@@ -752,3 +753,157 @@ doc ///
   
   SeeAlso
 ///
+
+doc ///
+  Key
+    "SCT graphs with exotic solutions"
+  Headline
+    finding graphs of small size with exotic solutions
+  Description
+    Text
+      We first construct the ideal $I_G$ for a specific graph $G$ on 5 vertices.
+      We use the 5-cycle as the specific example.
+    Example
+      debug needsPackage "Oscillators"
+      needsPackage "NautyGraphs"
+      Gstrs = generateGraphs(5, OnlyConnected => true, MinDegree => 2);
+      Gs = Gstrs/stringToGraph
+      printingPrecision = 3
+      for G in Gs list showExoticSolutions G;
+///
+
+doc ///
+  Key
+    "Example 4.1: unique graph on 8 vertices with exotic solutions and no induced cycle of length at least 5"
+  Headline
+    example 4.1 in arXiv 2312.16069
+  Description
+    Text
+      This example is a square inside a square, having 8 vertices,
+      and exotic solutions. This is the only SCT graph on 8 vertices
+      with exotic solutions, not containing an induced $k$-cycle, for $k \ge 5$.
+    Example
+      needsPackage "Oscillators";
+      printingPrecision = 3;
+      G = graph{
+          {0,4},{1,4},{1,5},
+          {3,5},{2,6},{3,6},
+          {0,7},{2,7},{4,5},
+          {5,6},{6,7},{4,7}}
+      stablesols = {{0, 0, -1, .707, -.707, -.707, .707, -1, 1, 0, -.707, -.707, .707, .707},
+          {1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+          {0, 0, -1, .707, -.707, -.707, .707, 1, -1, 0, .707, .707, -.707, -.707}}
+    Text
+      Computing the (linearly) stable solutions for K5C5 takes a minute or two:
+    Pre
+      elapsedTime stablesols = showExoticSolutions G;
+  SeeAlso
+    "Harrington-Schenck-Stillman"
+///
+
+doc ///
+  Key
+    "Example 4.2: a K5 and pentagon glued along an edge"
+  Headline
+    example 4.2 in arXiv 2312.16069
+  Description
+    Text
+      The first example is a pentagon.
+      The second example is K5 with a 5-cycle glued along an edge.
+    Example
+      needsPackage "Oscillators";
+      printingPrecision = 3;
+      Pent = graph{{0,1},{1,2},{2,3},{3,4},{4,0}}
+      K5C5 = graph{{0,1},{0,2},{0,3},{0,4},{1,2},{1,3},{1,4},
+          {2,3},{2,4},{3,4},{0,5},{5,6},{6,7},{1,7}}
+      stablesolsK5C5 = {{1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+          {.92, .98, .98, .98, .101, -.98, -.298, -.393, -.201, -.201, -.201, .995, .201, -.954},
+          {.92, .98, .98, .98, .101, -.98, -.298, .393, .201, .201, .201, -.995, -.201, .954}}
+      elapsedTime stablesolsPent = showExoticSolutions Pent
+    Text
+      Computing the (linearly) stable solutions for K5C5 takes a minute or two:
+    Pre
+          elapsedTime stablesolsK5C5 = showExoticSolutions K5C5
+  SeeAlso
+    "Harrington-Schenck-Stillman"
+///
+
+doc ///
+  Key
+    "Example 4.3: examples of gluing two cycles along an edge"
+  Headline
+    example 4.3 in arXiv 2312.16069
+  Description
+    Text
+      The following example has two pentagons glued on an edge, and this example
+      has 4 exotic solutions, and it is the unique graph on 8 vertices with
+      more than 2 exotic solutions.
+    Example
+      needsPackage "Oscillators";
+      printingPrecision = 3;
+      PentPent = graph{{0,1},{1,2},{2,3},{3,4},{4,0},{0,5},{5,6},{6,7},{7,1}}
+      stablesolsPentPent = {
+          {.648, .796, .908, .977, .215, -.908, -.605, .762, .605, .42, .215, -.977, -.42, .796},
+          {1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+          {.648, .796, .908, .977, .215, -.908, -.605, -.762, -.605, -.42, -.215, .977, .42, -.796},
+          {.648, -.605, -.908, .215, .977, .908, .796, .762, .796, -.42, -.977, .215, .42, .605},
+          {.648, -.605, -.908, .215, .977, .908, .796, -.762, -.796, .42, .977, -.215, -.42, -.605}}
+      stablesolsHexPent
+    Text
+      The computation of these (linearly) stable solutions takes perhaps a minute:
+    Pre
+      elapsedTime stablesolsPentPent = showExoticSolutions PentPent
+    Text
+      The following example has a hexagon and pentago glued identified on a common edge,
+      and this example has 9 vertices and 6 exotic solutions.
+    Example
+      HexPent = graph{{0,1},{1,2},{2,3},{3,4},{4,0},{0,5},{5,6},{6,7},{7,8},{8,1}}
+    Text
+      The computation of exotic solutions for this example takes several minutes:
+    Pre
+      elapsedTime stablesolsHexPent = showExoticSolutions HexPent
+  SeeAlso
+    "Harrington-Schenck-Stillman"
+///
+
+
+doc ///
+  Key
+    "Example 4.4: The square within a square"
+  Headline
+    example 4.4 in arXiv 2312.16069
+  Description
+    Text
+      The following is the one graph on 8 vertices with an exotic solution
+      where the Jacobian has some off-diagonal extries negative.
+    Example
+      needsPackage "Oscillators";
+      printingPrecision = 3;
+      G = graph {{0,1},{1,2},{2,3},{3,4},{4,5},{5,6},{6,0},{0,5},{0,2},{5,7},{2,7}}
+      stablesols = {{1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+          {.623, -.223, -.901, -.901, -.223, .623, -1, -.782, -.975, -.434, .434, .975, .782, 0},
+          {.623, -.223, -.901, -.901, -.223, .623, -1, .782, .975, .434, -.434, -.975, -.782, 0}}
+    Pre
+      elapsedTime stablesols = showExoticSolutions G
+    Text
+      The Jacobian at each exotic solution has negative off diagonl entries.
+    Example
+      Jac = oscJacobian(G, Reduced => true)
+      sub(Jac, matrix{stablesols#1})
+      sub(Jac, matrix{stablesols#2}) -- this is identical to the previous jacobian
+      sub(Jac, matrix{stablesols#0}) -- negative of Laplacian of the graph
+  SeeAlso
+    "Harrington-Schenck-Stillman"
+///
+
+
+doc ///
+  Key
+    "Harrington-Schenck-Stillman"
+  Headline
+    Arxiv 2312.16069 reference
+  Description
+    Text
+      [HSS] @arXiv("2312.16069", "Algebraic examples of homogeneous Kuramoto oscillators")@
+            by Heather Harrington, Hal Schenck, Mike Stillman, 2023.
+///            

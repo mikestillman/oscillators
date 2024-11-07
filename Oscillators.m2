@@ -1,12 +1,24 @@
 newPackage(
         "Oscillators",
-        Version => "0.1", 
-        Date => "",
-        Authors => {{
+        Version => "0.8", 
+        Date => "7 Nov 2024",
+        Authors => {
+            {
+                Name => "John Cobb", 
+                Email => "jdc0173@auburn.edu", 
+                HomePage => "https://johndcobb.github.io"
+                },
+            {
+                Name => "Hal Schenck", 
+                Email => "hks0015@auburn.edu",
+                HomePage => "http://webhome.auburn.edu/~hks0015"
+                },
+            {
                 Name => "Michael E. Stillman", 
                 Email => "mike@math.cornell.edu", 
                 HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"
-                }},
+                }
+            },
         Headline => "code to analyze graph oscillators",
         DebuggingMode => true,
         AuxiliaryFiles => true,
@@ -26,6 +38,7 @@ export {
     "isStableSolution",
     "getAngles",
     "getLinearlyStableSolutions",
+    "showExoticSolutions",
     "allUniquePrincipalMinors",
     "vertexSpanningPolynomial",
     "standardSols",
