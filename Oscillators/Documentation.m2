@@ -81,9 +81,11 @@ Description
     getAngles(4, stablesols, Radians=>false)
     sols = solveSystem I_*;
     sols = sols/coordinates;
-    assert(#sols == 30)
-    tally sols/(p -> identifyStability(Jac, p))
-    netList sols
+    sols = matrix sols -- every row is a solution
+    sols = clean(1e-6, sols) -- set to 0 numbers very close to 0
+    assert(numrows sols == 30)
+    tally (entries sols)/(p -> identifyStability(Jac, p))
+    sols
 ///
 
 ///
@@ -669,7 +671,7 @@ doc ///
 
 doc ///
   Key
-    "Checking the codimension of the IG ideal"
+    "Checking the codimension and irreducible decomposion of the IG ideal"
   Headline
     generating all SCT graphs on n vertices
   Description
@@ -691,8 +693,6 @@ doc ///
       This particular $I_G$ has the same codimension $n-1=4$, so is a complete intersection.
       This ideal decomposes as an intersection of 2 prime ideals.
     Example
-      numgens trim IG
-      codim IG
       comps = decompose IG;
       netList comps_0_*, netList comps_1_*
       comps/codim
@@ -707,6 +707,13 @@ doc ///
           codim IG <= #vertices G - 2
           ))
     Example
+      for G in Gs list (
+          IG = oscQuadrics(G, R);
+          elapsedTime comps := decompose IG;
+          {comps/codim, comps/degree}
+          );
+      netList oo
+    Example
       n = 6
       Gstrs = generateGraphs(n, OnlyConnected => true, MinDegree => 2);
       Gs = Gstrs/stringToGraph;
@@ -715,6 +722,13 @@ doc ///
           IG = oscQuadrics(G, R);
           codim IG <= #vertices G - 2
           ))
+    Example
+      allcomps = for G in Gs list (
+          IG = oscQuadrics(G, R);
+          elapsedTime comps := decompose IG;
+          {comps/codim, comps/degree}
+          );
+      netList ({{"codimensions", "degrees"}} | allcomps)
     Pre
       n = 7
       Gstrs = generateGraphs(n, OnlyConnected => true, MinDegree => 2);
