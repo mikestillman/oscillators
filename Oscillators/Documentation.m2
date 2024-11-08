@@ -33,7 +33,12 @@ Headline
   generation and analysis of oscillator steady states for small graphs
 Description
   Text
-    @SUBSECTION "Computations from the paper [Harrington, Schenck, Stillman, Algebraic aspects of homogeneous Kuramoto oscillators]"@
+    This package supports computations with Kuramoto oscillators,
+    including computations for the paper [HSS], Harrington, Schenck,
+    Stillman, @arXiv("2312.16069", "Algebraic aspects of homogeneous
+    Kuramoto oscillators")@.
+  Text
+    @SUBSECTION "Computations from the paper [HSS]"@
   Text
     @UL {
         TO "Generation of all SCT (simple, connected, 2-connected) graphs on small numbers of vertices",
@@ -45,30 +50,38 @@ Description
         TO "Example 4.4: The square within a square"
         }@
   Text
-    This package supports computations with Kuramoto oscillators, including computations for the paper [HSS], Harrington, Schenck, Stillman, @arXiv("2312.16069", "Algebraic aspects of homogeneous Kuramoto oscillators")@.
-  Text
     We show a possible workflow using this package.  We use @TO "NautyGraphs::NautyGraphs"@
     to generate graphs of small size.  We use @TO "Visualize::Visualize"@ to look at these graphs.
   Example
-    needsPackage "Oscillators"
-    needsPackage "NautyGraphs"
-    needsPackage "Visualize"
-    vert4edges4 = generateGraphs(4, 4)
-    Gs = vert4edges4/stringToGraph
+    needsPackage "Oscillators";
+    needsPackage "NautyGraphs";
+    needsPackage "Visualize";
   Text
-    Now, for each graph we consider the oscillator dynamical system.
-    
-    Let's do an example, using a graph with 5 vertices and 7 edges
+    Let's do an example: the 5-cycle.  First, we generate all SCT graphs on 5 vertices (i.e. connected, 2-connected simple graphs),
+    and grab the 5-cycle.
   Example
     Gstrs = generateGraphs(5, OnlyConnected => true, MinDegree => 2);
     Gs = Gstrs/stringToGraph
     Gcycle5 = Gs_3
-    K5 = Gs_-1
+  Text
+    We can also create the graph directly.
+  Example
+    Gcycle5 == graph{{0,1},{1,2},{2,3},{3,4},{4,0}}
+  Text
+    To visualize this graph, use the following lines.  You have to click on End session
+    in the browser to get back to Macaulay2.
   Pre
     openPort "8083"
-    visualize G -- important: click on End session in browser window before continuing
+    visualize Gcycle5 -- important: click on End session in browser window before continuing
     closePort()
+  Text
+    We construct all of the (steady-state) solutions to the homogeneous Kuramoto system for the 5-cycle.
+    This includes all solutions, not just stable solutions.
+    In this example, we first construct the real solutions, and check their (linear) stability.
+    Then we find all complex solutions.  In this particular example, all 30 solutions are real.
+    We set the precision displayed to 3 digits.
   Example
+    printingPrecision = 3
     G = Gcycle5
     R = oscRing(G, CoefficientRing => CC, Reduced => true)
     I = oscSystem(G, R);
@@ -84,9 +97,10 @@ Description
     sols = sols/coordinates;
     sols = matrix sols -- every row is a solution
     sols = clean(1e-6, sols) -- set to 0 numbers very close to 0
-    assert(numrows sols == 30)
+    assert(numrows sols == 30) -- all the solutions in this example are real
     tally (entries sols)/(p -> identifyStability(Jac, p))
-    sols
+  Text
+    For the further analysis of these ideals, see @TO "oscQuadrics"@.
 ///
 
 ///
@@ -568,6 +582,46 @@ Description
     G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}});
     getLinearlyStableSolutions(G)
 SeeAlso
+  findRealSolutions
+  identifyStability
+///
+
+doc ///
+Key
+  showExoticSolutions
+  (showExoticSolutions, Graph)
+Headline
+  Display exotic solutions: linearly stable solutions which are not all-in-phase solution
+Usage
+  showExoticSolutions G
+Inputs
+  G: Graph
+    An undirected, connected graph
+Outputs  
+  : List
+    A list of all of the linearly stable solutions for the Kuramoto oscillator system associated to the graph
+Consequences
+  Item
+    The list of exotic solutions is displayed, together with the angles of the oscillators (where the first angle is always zero, and not displayed)
+Description
+  Text
+    This function first calls @TO getLinearlyStableSolutions@, and then displays any exotic solutions that exist.
+    A stable solution is exotic if it is not the all-in-phase solution (all the angles are the same),
+    and returns all of the stable solutions found.
+
+    Note that the warning that there are non-regular solutions generally means that it has come across a positive dimensional
+    solution set while looking for solutions.  No such solutions can be linearly stable, so the warning is generally not relevant.
+  Example
+    G = graph {{0,1},{1,2},{2,3},{3,4},{4,0}}
+    showExoticSolutions G
+  Text
+    Note that if there are exotic solutions, all linearly stable solutions are displayed, and if there are no exotic solutions,
+    nothing is displayed (other than possibly warnings and timings).
+  Example
+    G = graph {{0,1},{1,2},{2,3},{3,4},{4,2},{4,0}}
+    showExoticSolutions G
+SeeAlso
+  getLinearlyStableSolutions
   findRealSolutions
   identifyStability
 ///
