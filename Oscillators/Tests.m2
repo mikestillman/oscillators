@@ -454,6 +454,7 @@ TEST ///
 
 -- Test 9
 TEST ///
+    gbTrace=0
     needsPackage "NautyGraphs"
     needsPackage "Visualize"
 
