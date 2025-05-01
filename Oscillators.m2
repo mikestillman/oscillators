@@ -29,7 +29,6 @@ newPackage(
         )
 
 export {
-    "hasNoLeaf",
     "oscRing",
     "oscQuadrics",
     "oscJacobian",
@@ -38,6 +37,7 @@ export {
     "isStableSolution",
     "getAngles",
     "getLinearlyStableSolutions",
+    "getExoticSolutions",
     "showExoticSolutions",
     "allUniquePrincipalMinors",
     "vertexSpanningPolynomial",

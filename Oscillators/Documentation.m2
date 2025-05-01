@@ -36,7 +36,8 @@ Description
     This package supports computations with Kuramoto oscillators,
     including computations for the paper [HSS], Harrington, Schenck,
     Stillman, @arXiv("2312.16069", "Algebraic aspects of homogeneous
-    Kuramoto oscillators")@.
+    Kuramoto oscillators")@.  For a list of functions, and links to their documentation
+    nodes, see the end of this page.
   Text
     @SUBSECTION "Computations from the paper [HSS]"@
   Text
@@ -541,28 +542,6 @@ SeeAlso
 
 doc ///
 Key
-  hasNoLeaf
-  (hasNoLeaf, Graph)
-Headline
-  Check if a graph has no leaf vertices
-Usage 
-  hasNoLeaf(G)  
-Inputs
-  G: Graph
-    An undirected graph
-Outputs
-  : Boolean
-    True if the graph has no leaf vertices, false otherwise
-Description
-  Text
-    The function hasNoLeaf checks if a given graph has no leaf vertices. A leaf vertex is a vertex with degree 1, meaning it is connected to only one other vertex in the graph.
-  Example
-    G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}});
-    hasNoLeaf(G)
-///
-
-doc ///
-Key
   getLinearlyStableSolutions
   (getLinearlyStableSolutions, Graph)
 Headline
@@ -590,10 +569,13 @@ doc ///
 Key
   showExoticSolutions
   (showExoticSolutions, Graph)
+  getExoticSolutions
+  (getExoticSolutions, Graph)
 Headline
   Display exotic solutions: linearly stable solutions which are not all-in-phase solution
 Usage
   showExoticSolutions G
+  getExoticSolutions G
 Inputs
   G: Graph
     An undirected, connected graph
@@ -609,7 +591,9 @@ Description
     A stable solution is exotic if it is not the all-in-phase solution (all the angles are the same),
     and returns all of the stable solutions found.
 
-    Note that the warning that there are non-regular solutions generally means that it has come across a positive dimensional
+    Note: The methods {\tt getExoticSolutions} and {\tt showExoticSolutions} are the same, for historical reasons.
+    
+    The warning that there are non-regular solutions generally means that it has come across a positive dimensional
     solution set while looking for solutions.  No such solutions can be linearly stable, so the warning is generally not relevant.
   Example
     G = graph {{0,1},{1,2},{2,3},{3,4},{4,0}}
@@ -818,7 +802,7 @@ doc ///
       We first construct the ideal $I_G$ for a specific graph $G$ on 5 vertices.
       We use the 5-cycle as the specific example.
     Example
-      debug needsPackage "Oscillators"
+      needsPackage "Oscillators"
       needsPackage "NautyGraphs"
       Gstrs = generateGraphs(5, OnlyConnected => true, MinDegree => 2);
       Gs = Gstrs/stringToGraph

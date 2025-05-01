@@ -150,12 +150,10 @@ TEST ///
   n = 5;
   R = oscRing (n, Reduced => true);
 
-  Gstrs = flatten for i from n-1 to binomial(n,2)-1 list generateGraphs(n,i, OnlyConnected=>true);
-  #Gstrs
-  #Gstrs == 20
+  Gstrs = generateGraphs(n, OnlyConnected => true, MinDegree => 2);  
+  assert(#Gstrs == 11)
   G5s = Gstrs/stringToGraph;
-  G5s = select(G5s, hasNoLeaf); #G5s 
-  assert(#G5s == 10)
+  assert(#G5s == 11)
 
   I0 = oscQuadrics(G5s_0, R)
   -- TODO: the order of generators is different since we are soring vertices.

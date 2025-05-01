@@ -1,12 +1,3 @@
-
---------------------------------------------------------------------
------ Internal Helper Functions
---------------------------------------------------------------------
-
-hasNoLeaf = method()
-hasNoLeaf Graph := G -> all(vertices G, i -> degree(G,i) > 1)
-
-
 --------------------------------------------------------------------
 ----- Creation of main objects (OscRing, oscQuadrics)
 --------------------------------------------------------------------
@@ -266,3 +257,7 @@ showExoticSolutions Graph := G -> (
         );
     stablesols
     )
+
+-- for compatibility with the paper
+getExoticSolutions = method()
+getExoticSolutions Graph := G -> showExoticSolutions G
